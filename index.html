@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Référendum 21 Septembre 2025 - Gestion Toulouse</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header avec sélecteur de mode -->
+    <header class="app-header">
+        <div class="container">
+            <div class="flex items-center justify-between">
+                <div class="header-content">
+                    <h1>GN Référendum 21 Septembre 2025</h1>
+                    <p class="header-subtitle">Gestion Toulouse - 3 Bureaux de Vote - 1366 électeurs</p>
+                </div>
+                <div class="mode-selector">
+                    <select id="modeSelector" class="mode-select">
+                        <option value="recherche">🔍 Recherche Électeur</option>
+                        <option value="distribution">📋 Distribution Cartes</option>
+                        <option value="entree">🚪 Contrôle Entrée</option>
+                        <option value="emargement">📝 Émargement Sortie</option>
+                        <option value="tableau-bord">📊 Tableau de Bord</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mode Recherche Électeur -->
+    <section id="mode-recherche" class="mode-section active">
+        <div class="container">
+            <div class="hero-section">
+                <h2>🔍 Recherche d'Électeur</h2>
+                <p>Recherchez un électeur par nom, prénom et date de naissance</p>
+            </div>
+
+            <div class="search-form-container">
+                <div class="card">
+                    <div class="card__header">
+                        <h3>Formulaire de Recherche</h3>
+                    </div>
+                    <div class="card__body">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Nom *</label>
+                                <input type="text" id="searchNom" class="form-control" placeholder="Nom de famille" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Prénom *</label>
+                                <input type="text" id="searchPrenom" class="form-control" placeholder="Prénom" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Date de naissance</label>
+                                <input type="date" id="searchDateNaissance" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <div class="form-actions">
+                                    <button type="button" id="btnRechercher" class="btn btn--primary">Rechercher</button>
+                                    <button type="button" id="btnEffacerRecherche" class="btn btn--outline">Effacer</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Résultats de recherche -->
+            <div id="resultatsRecherche" class="hidden">
+                <div class="card">
+                    <div class="card__header">
+                        <h3>Résultats de la Recherche</h3>
+                    </div>
+                    <div class="card__body">
+                        <div id="resultatsContainer"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Plan de la salle -->
+            <div class="card">
+                <div class="card__header">
+                    <h3>🏢 Plan de la Salle de Vote</h3>
+                </div>
+                <div class="card__body">
+                    <div class="plan-salle">
+                        <div class="file-bv file-bv-1">
+                            <h4>File BV-1 (Bleue)</h4>
+                            <p>Bureau 1 - 456 électeurs</p>
+                            <p>Numéros 1 à 456</p>
+                        </div>
+                        <div class="file-bv file-bv-2">
+                            <h4>File BV-2 (Rouge)</h4>
+                            <p>Bureau 2 - 455 électeurs</p>
+                            <p>Numéros 1 à 455</p>
+                        </div>
+                        <div class="file-bv file-bv-3">
+                            <h4>File BV-3 (Verte)</h4>
+                            <p>Bureau 3 - 455 électeurs</p>
+                            <p>Numéros 1 à 455</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mode Distribution -->
+    <section id="mode-distribution" class="mode-section">
+        <div class="container">
+            <div class="distribution-header">
+                <h2>📋 Distribution des Cartes d'Électeur (J-3 à J-1)</h2>
+                <p>Vérifiez l'identité et marquez les cartes comme distribuées</p>
+            </div>
+
+            <!-- Recherche rapide -->
+            <div class="card search-card">
+                <div class="card__header">
+                    <h3>Recherche Rapide</h3>
+                </div>
+                <div class="card__body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="text" id="distributionSearch" class="form-control" placeholder="Recherche par nom, prénom ou numéro...">
+                        </div>
+                        <div class="form-group">
+                            <select id="distributionBureau" class="form-control">
+                                <option value="">Tous les bureaux</option>
+                                <option value="BV-1">Bureau BV-1</option>
+                                <option value="BV-2">Bureau BV-2</option>
+                                <option value="BV-3">Bureau BV-3</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="distributionResultats" class="search-results"></div>
+                </div>
+            </div>
+
+            <!-- Électeur sélectionné pour distribution -->
+            <div id="electeurDistribution" class="card electeur-display hidden">
+                <div class="card__header">
+                    <h3>👤 Électeur Sélectionné</h3>
+                </div>
+                <div class="card__body">
+                    <div id="infoElecteurDistribution" class="electeur-info"></div>
+                    <div class="distribution-actions">
+                        <button id="btnMarquerDistribuee" class="btn btn--primary btn-large">✅ Carte Distribuée</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistiques distribution -->
+            <div class="stats-grid">
+                <div class="stat-card stat-bv-1">
+                    <div class="stat-header">BV-1</div>
+                    <div class="stat-number" id="distrib-bv1">0</div>
+                    <div class="stat-label">Cartes distribuées</div>
+                    <div class="stat-total">/ 456</div>
+                </div>
+                <div class="stat-card stat-bv-2">
+                    <div class="stat-header">BV-2</div>
+                    <div class="stat-number" id="distrib-bv2">0</div>
+                    <div class="stat-label">Cartes distribuées</div>
+                    <div class="stat-total">/ 455</div>
+                </div>
+                <div class="stat-card stat-bv-3">
+                    <div class="stat-header">BV-3</div>
+                    <div class="stat-number" id="distrib-bv3">0</div>
+                    <div class="stat-label">Cartes distribuées</div>
+                    <div class="stat-total">/ 455</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mode Contrôle Entrée -->
+    <section id="mode-entree" class="mode-section">
+        <div class="container">
+            <div class="entree-header">
+                <h2>🚪 Contrôle d'Entrée - Jour J</h2>
+                <p>Vérifiez la carte distribuée et orientez vers la bonne file</p>
+            </div>
+
+            <!-- Recherche entrée -->
+            <div class="card search-card">
+                <div class="card__header">
+                    <h3>Recherche Électeur</h3>
+                </div>
+                <div class="card__body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="text" id="entreeSearch" class="form-control" placeholder="Nom, prénom ou numéro...">
+                        </div>
+                        <div class="form-group">
+                            <select id="entreeBureau" class="form-control">
+                                <option value="">Tous les bureaux</option>
+                                <option value="BV-1">Bureau BV-1</option>
+                                <option value="BV-2">Bureau BV-2</option>
+                                <option value="BV-3">Bureau BV-3</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="entreeResultats" class="search-results"></div>
+                </div>
+            </div>
+
+            <!-- Orientation électeur -->
+            <div id="electeurEntree" class="card electeur-display hidden">
+                <div class="card__header">
+                    <h3>🎯 Orientation Électeur</h3>
+                </div>
+                <div class="card__body">
+                    <div id="infoElecteurEntree" class="electeur-info"></div>
+                    <div id="orientationFile" class="orientation-info"></div>
+                    <div class="entree-actions">
+                        <button id="btnMarquerPresent" class="btn btn--primary btn-large">✅ Présent au Vote</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Affluence temps réel -->
+            <div class="stats-grid">
+                <div class="stat-card stat-bv-1">
+                    <div class="stat-header">File BV-1</div>
+                    <div class="stat-number" id="present-bv1">0</div>
+                    <div class="stat-label">Présents</div>
+                </div>
+                <div class="stat-card stat-bv-2">
+                    <div class="stat-header">File BV-2</div>
+                    <div class="stat-number" id="present-bv2">0</div>
+                    <div class="stat-label">Présents</div>
+                </div>
+                <div class="stat-card stat-bv-3">
+                    <div class="stat-header">File BV-3</div>
+                    <div class="stat-number" id="present-bv3">0</div>
+                    <div class="stat-label">Présents</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mode Émargement -->
+    <section id="mode-emargement" class="mode-section">
+        <div class="container">
+            <div class="emargement-header">
+                <h2>📝 Émargement et Sortie - Jour J</h2>
+                <p>Recherche par numéro et bureau pour confirmer le vote</p>
+            </div>
+
+            <!-- Recherche émargement -->
+            <div class="card search-card">
+                <div class="card__header">
+                    <h3>Recherche pour Émargement</h3>
+                </div>
+                <div class="card__body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Numéro dans la liste *</label>
+                            <input type="number" id="emargementNumero" class="form-control" min="1" max="456" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Bureau *</label>
+                            <select id="emargementBureau" class="form-control" required>
+                                <option value="">Sélectionner le bureau</option>
+                                <option value="BV-1">Bureau BV-1</option>
+                                <option value="BV-2">Bureau BV-2</option>
+                                <option value="BV-3">Bureau BV-3</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" id="btnChercherEmargement" class="btn btn--primary">Rechercher</button>
+                    </div>
+                    <div id="emargementResultat" class="search-results"></div>
+                </div>
+            </div>
+
+            <!-- Émargement électeur -->
+            <div id="electeurEmargement" class="card electeur-display hidden">
+                <div class="card__header">
+                    <h3>✍️ Émargement Électeur</h3>
+                </div>
+                <div class="card__body">
+                    <div id="infoElecteurEmargement" class="electeur-info"></div>
+                    <div id="signatureInfo" class="signature-info"></div>
+                    <div class="emargement-actions">
+                        <button id="btnMarquerVote" class="btn btn--primary btn-large">✅ A Voté</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Participation temps réel -->
+            <div class="stats-grid">
+                <div class="stat-card stat-bv-1">
+                    <div class="stat-header">BV-1</div>
+                    <div class="stat-number" id="vote-bv1">0</div>
+                    <div class="stat-label">Ont voté</div>
+                    <div class="stat-total">/ 456</div>
+                </div>
+                <div class="stat-card stat-bv-2">
+                    <div class="stat-header">BV-2</div>
+                    <div class="stat-number" id="vote-bv2">0</div>
+                    <div class="stat-label">Ont voté</div>
+                    <div class="stat-total">/ 455</div>
+                </div>
+                <div class="stat-card stat-bv-3">
+                    <div class="stat-header">BV-3</div>
+                    <div class="stat-number" id="vote-bv3">0</div>
+                    <div class="stat-label">Ont voté</div>
+                    <div class="stat-total">/ 455</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mode Tableau de Bord -->
+    <section id="mode-tableau-bord" class="mode-section">
+        <div class="container">
+            <div class="tableau-header">
+                <h2>📊 Tableau de Bord Complet</h2>
+                <p>Vue d'ensemble des 3 bureaux de vote</p>
+            </div>
+
+            <!-- Vue d'ensemble -->
+            <div class="card">
+                <div class="card__header">
+                    <h3>🎯 Statistiques Globales</h3>
+                </div>
+                <div class="card__body">
+                    <div class="overview-grid">
+                        <div class="overview-stat">
+                            <div class="stat-number" id="totalElecteurs">1366</div>
+                            <div class="stat-label">Total électeurs</div>
+                        </div>
+                        <div class="overview-stat">
+                            <div class="stat-number" id="totalDistribuees">0</div>
+                            <div class="stat-label">Cartes distribuées</div>
+                        </div>
+                        <div class="overview-stat">
+                            <div class="stat-number" id="totalPresents">0</div>
+                            <div class="stat-label">Présents</div>
+                        </div>
+                        <div class="overview-stat">
+                            <div class="stat-number" id="totalVotes">0</div>
+                            <div class="stat-label">Ont voté</div>
+                        </div>
+                        <div class="overview-stat">
+                            <div class="stat-number" id="tauxParticipation">0%</div>
+                            <div class="stat-label">Participation</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Par bureau -->
+            <div class="card">
+                <div class="card__header">
+                    <h3>📈 Statistiques par Bureau</h3>
+                </div>
+                <div class="card__body">
+                    <div class="bureau-stats">
+                        <div class="bureau-stat bureau-bv-1">
+                            <h4>Bureau BV-1</h4>
+                            <div class="bureau-numbers">
+                                <div>Électeurs: <span>456</span></div>
+                                <div>Distribuées: <span id="bv1-distribuees">0</span></div>
+                                <div>Présents: <span id="bv1-presents">0</span></div>
+                                <div>Votes: <span id="bv1-votes">0</span></div>
+                                <div>Taux: <span id="bv1-taux">0%</span></div>
+                            </div>
+                        </div>
+                        <div class="bureau-stat bureau-bv-2">
+                            <h4>Bureau BV-2</h4>
+                            <div class="bureau-numbers">
+                                <div>Électeurs: <span>455</span></div>
+                                <div>Distribuées: <span id="bv2-distribuees">0</span></div>
+                                <div>Présents: <span id="bv2-presents">0</span></div>
+                                <div>Votes: <span id="bv2-votes">0</span></div>
+                                <div>Taux: <span id="bv2-taux">0%</span></div>
+                            </div>
+                        </div>
+                        <div class="bureau-stat bureau-bv-3">
+                            <h4>Bureau BV-3</h4>
+                            <div class="bureau-numbers">
+                                <div>Électeurs: <span>455</span></div>
+                                <div>Distribuées: <span id="bv3-distribuees">0</span></div>
+                                <div>Présents: <span id="bv3-presents">0</span></div>
+                                <div>Votes: <span id="bv3-votes">0</span></div>
+                                <div>Taux: <span id="bv3-taux">0%</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exports -->
+            <div class="card">
+                <div class="card__header">
+                    <h3>📤 Exports et Actions</h3>
+                </div>
+                <div class="card__body">
+                    <div class="export-actions">
+                        <button id="btnExportComplet" class="btn btn--primary">📄 Export Complet CSV</button>
+                        <button id="btnExportEmargement" class="btn btn--outline">📝 Export Émargement</button>
+                        <button id="btnExportParBureau" class="btn btn--outline">🏢 Export par Bureau</button>
+                        <button id="btnExportStats" class="btn btn--outline">📊 Export Statistiques</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Listes non distribuées -->
+            <div class="card">
+                <div class="card__header">
+                    <h3>⚠️ Cartes Non Distribuées</h3>
+                </div>
+                <div class="card__body">
+                    <div id="cartesNonDistribuees">
+                        <p class="text-secondary">Chargement des données...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="database.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
